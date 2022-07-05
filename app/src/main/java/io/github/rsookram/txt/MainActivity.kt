@@ -7,11 +7,9 @@ import androidx.activity.viewModels
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import dagger.hilt.android.AndroidEntryPoint
 import io.github.rsookram.txt.reader.ReaderViewModel
 import io.github.rsookram.txt.reader.view.ReaderView
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity(R.layout.view_reader) {
 
     private val vm: ReaderViewModel by viewModels()

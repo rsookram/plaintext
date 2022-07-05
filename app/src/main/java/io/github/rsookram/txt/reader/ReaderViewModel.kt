@@ -1,19 +1,14 @@
 package io.github.rsookram.txt.reader
 
+import android.app.Application
 import androidx.lifecycle.*
-import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.rsookram.txt.Book
 import io.github.rsookram.txt.BookContent
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class ReaderViewModel @Inject constructor(
-    private val progressDao: ProgressDao,
-    private val loader: ContentLoader,
-) : ViewModel() {
+class ReaderViewModel(application: Application) : AndroidViewModel(application) {
 
     private val content = MutableLiveData<BookContent>()
     val contents: LiveData<BookContent> = content
@@ -25,6 +20,9 @@ class ReaderViewModel @Inject constructor(
     val progressChanges: LiveData<Pair<Int, Int>> = progress
 
     private var currentLine: Int? = null
+
+    private val progressDao = ProgressDao.getInstance(getApplication())
+    private val loader = ContentLoader(getApplication<Application>().contentResolver)
 
     private lateinit var book: Book
 
@@ -69,12 +67,12 @@ private fun <T : Any> eventLiveData() = object : MutableLiveData<T>() {
     private var pending = false
 
     override fun observe(owner: LifecycleOwner, observer: Observer<in T>) {
-        super.observe(owner, { t ->
+        super.observe(owner) { t ->
             if (pending) {
                 pending = false
                 observer.onChanged(t)
             }
-        })
+        }
     }
 
     override fun setValue(value: T) {

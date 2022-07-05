@@ -1,5 +1,6 @@
 package io.github.rsookram.txt.reader
 
+import android.content.Context
 import androidx.room.*
 import io.github.rsookram.txt.Book
 
@@ -37,4 +38,15 @@ abstract class ProgressDao {
     protected abstract suspend fun insert(progress: Progress)
 
     private fun key(book: Book): String? = book.uri.path
+
+    companion object {
+
+        private lateinit var db: AppDatabase
+
+        fun getInstance(context: Context) {
+            db = Room.databaseBuilder(context, AppDatabase::class.java, "txt.db").build()
+
+            db.progressDao()
+        }
+    }
 }

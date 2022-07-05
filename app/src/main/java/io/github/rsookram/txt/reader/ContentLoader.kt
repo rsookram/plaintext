@@ -1,21 +1,15 @@
 package io.github.rsookram.txt.reader
 
-import android.content.Context
-import dagger.hilt.android.qualifiers.ApplicationContext
-import io.github.rsookram.txt.BgContext
+import android.content.ContentResolver
 import io.github.rsookram.txt.Book
 import io.github.rsookram.txt.BookContent
 import io.github.rsookram.txt.Line
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
-class ContentLoader @Inject constructor(
-    @ApplicationContext private val context: Context,
-    @BgContext private val ioContext: CoroutineContext,
-) {
+class ContentLoader(private val contentResolver: ContentResolver) {
 
-    suspend fun load(book: Book): BookContent = withContext(ioContext) {
+    suspend fun load(book: Book): BookContent = withContext(Dispatchers.IO) {
         val lines = getLines(book)
         val lastLine = lines.lastOrNull()
         val length = if (lastLine != null) lastLine.offset + lastLine.text.length else 0
@@ -37,7 +31,7 @@ class ContentLoader @Inject constructor(
     }
 
     private fun getLineStrings(book: Book): Sequence<String> {
-        val stream = context.contentResolver.runCatching { openInputStream(book.uri) }
+        val stream = contentResolver.runCatching { openInputStream(book.uri) }
             .getOrNull()
             ?: return emptySequence()
 
