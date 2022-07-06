@@ -1,22 +1,24 @@
 package io.github.rsookram.txt
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.Window
-import androidx.activity.ComponentActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import io.github.rsookram.txt.reader.ReaderViewModel
 import io.github.rsookram.txt.reader.view.ReaderView
 
-class MainActivity : ComponentActivity(R.layout.view_reader) {
+class MainActivity : Activity() {
 
     private lateinit var vm: ReaderViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        vm = lastCustomNonConfigurationInstance as? ReaderViewModel
+        setContentView(R.layout.view_reader)
+
+        vm = lastNonConfigurationInstance as? ReaderViewModel
             ?: ReaderViewModel(applicationContext)
 
         window.enableImmersiveMode()
@@ -44,7 +46,7 @@ class MainActivity : ComponentActivity(R.layout.view_reader) {
         vm.onProgress = view::bindProgress
     }
 
-    override fun onRetainCustomNonConfigurationInstance(): Any = vm
+    override fun onRetainNonConfigurationInstance(): Any = vm
 
     override fun onStop() {
         super.onStop()
