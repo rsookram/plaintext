@@ -1,10 +1,8 @@
 package io.github.rsookram.txt.reader
 
 import android.content.Context
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
+import android.os.Handler
+import android.os.Looper
 import io.github.rsookram.txt.Book
 import io.github.rsookram.txt.BookContent
 import java.util.concurrent.CompletableFuture
@@ -12,26 +10,44 @@ import java.util.concurrent.Future
 
 class ReaderViewModel(context: Context) {
 
-    private val content = MutableLiveData<BookContent>()
-    val contents: LiveData<BookContent> = content
+    var onContent: (BookContent) -> Unit = {}
+        set(value) {
+            val content = content
+            if (content != null) {
+                value(content)
+            }
 
-    private val seekEvent = eventLiveData<Int>()
-    val seeks: LiveData<Int> = seekEvent
+            field = value
+        }
 
-    private val progress = MutableLiveData<Pair<Int, Int>>()
-    val progressChanges: LiveData<Pair<Int, Int>> = progress
+    var onSeek: (Int) -> Unit = {}
+
+    var onProgress: (Int, Int) -> Unit = { _, _ -> }
+        set(value) {
+            val progress = progress
+            if (progress != null) {
+                value(progress.first, progress.second)
+            }
+
+            field = value
+        }
+
+    private var content: BookContent? = null
+    private var progress: Pair<Int, Int>? = null
 
     private var currentLine: Int? = null
 
     private val progressDao = ProgressDao(context)
     private val loader = ContentLoader(context.contentResolver)
 
+    private val handler = Handler(Looper.getMainLooper())
+
     private val cancellables = mutableListOf<Future<*>>()
 
     private lateinit var book: Book
 
     fun load(book: Book) {
-        if (content.value != null) {
+        if (content != null) {
             return
         }
 
@@ -41,19 +57,23 @@ class ReaderViewModel(context: Context) {
             loader.load(book)
         }.thenAccept { content ->
             val progress = progressDao.get(book)
-            this@ReaderViewModel.content.postValue(content)
-            seekEvent.postValue(progress ?: 0)
+            handler.post {
+                this@ReaderViewModel.content = content
+                onContent(content)
+                onSeek(progress ?: 0)
+            }
         }
     }
 
     fun onProgressChanged(progress: Int, offsetInLine: Int) {
         currentLine = progress
 
-        val content = content.value ?: return
+        val content = content ?: return
         val line = content.lines.getOrNull(progress) ?: return
 
         val totalOffset = line.offset + offsetInLine
-        this.progress.value = totalOffset to content.length
+        this@ReaderViewModel.progress = totalOffset to content.length
+        onProgress(totalOffset, content.length)
     }
 
     fun saveProgress() {
@@ -64,24 +84,7 @@ class ReaderViewModel(context: Context) {
     fun onCleared() {
         cancellables.forEach { it.cancel(false) }
         cancellables.clear()
-    }
-}
 
-private fun <T : Any> eventLiveData() = object : MutableLiveData<T>() {
-
-    private var pending = false
-
-    override fun observe(owner: LifecycleOwner, observer: Observer<in T>) {
-        super.observe(owner) { t ->
-            if (pending) {
-                pending = false
-                observer.onChanged(t)
-            }
-        }
-    }
-
-    override fun setValue(value: T) {
-        pending = true
-        super.setValue(value)
+        handler.removeCallbacksAndMessages(null)
     }
 }

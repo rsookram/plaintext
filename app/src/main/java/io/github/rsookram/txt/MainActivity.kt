@@ -39,13 +39,9 @@ class MainActivity : ComponentActivity(R.layout.view_reader) {
         val book = Book(uri)
         vm.load(book)
 
-        vm.contents.observe(this, view::setContent)
-
-        vm.seeks.observe(this, view::seekTo)
-
-        vm.progressChanges.observe(this) { (offset, length) ->
-            view.bindProgress(offset, length)
-        }
+        vm.onContent = view::setContent
+        vm.onSeek = view::seekTo
+        vm.onProgress = view::bindProgress
     }
 
     override fun onRetainCustomNonConfigurationInstance(): Any = vm
@@ -57,6 +53,10 @@ class MainActivity : ComponentActivity(R.layout.view_reader) {
 
     override fun onDestroy() {
         super.onDestroy()
+
+        vm.onContent = {}
+        vm.onSeek = {}
+        vm.onProgress = { _, _ -> }
 
         if (isFinishing) {
             vm.onCleared()

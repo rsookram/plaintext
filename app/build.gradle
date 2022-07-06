@@ -30,6 +30,4 @@ dependencies {
     implementation 'androidx.core:core:1.8.0'
     implementation 'androidx.activity:activity:1.5.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
-
-    implementation 'androidx.lifecycle:lifecycle-livedata:2.5.0'
 }
