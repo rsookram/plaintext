@@ -14,15 +14,42 @@ android {
         versionName "1.0"
     }
 
+    signingConfigs {
+        debug {
+            storeFile file("debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+        release {
+            if (System.getenv("TXT_STORE_FILE") != null) {
+                storeFile file(System.getenv("TXT_STORE_FILE"))
+                storePassword System.getenv("TXT_STORE_PASSWORD")
+                keyAlias System.getenv("TXT_KEY_ALIAS")
+                keyPassword System.getenv("TXT_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
         release {
             minifyEnabled true
+            shrinkResources true
             proguardFiles 'proguard-rules.pro'
+
+            signingConfig signingConfigs.release
         }
     }
 
     dependenciesInfo {
         includeInApk = false
+    }
+
+    lint {
+        checkReleaseBuilds = false
     }
 }
 
