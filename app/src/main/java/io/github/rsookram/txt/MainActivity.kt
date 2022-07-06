@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.lifecycle.ViewModelProvider
 import io.github.rsookram.txt.reader.ReaderViewModel
 import io.github.rsookram.txt.reader.view.ReaderView
 
@@ -17,7 +16,8 @@ class MainActivity : ComponentActivity(R.layout.view_reader) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        vm = ViewModelProvider(this)[ReaderViewModel::class.java]
+        vm = lastCustomNonConfigurationInstance as? ReaderViewModel
+            ?: ReaderViewModel(applicationContext)
 
         window.enableImmersiveMode()
 
@@ -48,9 +48,19 @@ class MainActivity : ComponentActivity(R.layout.view_reader) {
         }
     }
 
+    override fun onRetainCustomNonConfigurationInstance(): Any = vm
+
     override fun onStop() {
         super.onStop()
         vm.saveProgress()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        if (isFinishing) {
+            vm.onCleared()
+        }
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {

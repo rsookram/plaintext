@@ -31,7 +31,5 @@ dependencies {
     implementation 'androidx.activity:activity:1.5.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
 
-    def lifecycle = '2.5.0'
-    implementation "androidx.lifecycle:lifecycle-livedata:${lifecycle}"
-    implementation "androidx.lifecycle:lifecycle-viewmodel:${lifecycle}"
+    implementation 'androidx.lifecycle:lifecycle-livedata:2.5.0'
 }

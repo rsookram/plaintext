@@ -1,13 +1,16 @@
 package io.github.rsookram.txt.reader
 
-import android.app.Application
-import androidx.lifecycle.*
+import android.content.Context
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import io.github.rsookram.txt.Book
 import io.github.rsookram.txt.BookContent
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 
-class ReaderViewModel(application: Application) : AndroidViewModel(application) {
+class ReaderViewModel(context: Context) {
 
     private val content = MutableLiveData<BookContent>()
     val contents: LiveData<BookContent> = content
@@ -20,8 +23,8 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
 
     private var currentLine: Int? = null
 
-    private val progressDao = ProgressDao(getApplication())
-    private val loader = ContentLoader(getApplication<Application>().contentResolver)
+    private val progressDao = ProgressDao(context)
+    private val loader = ContentLoader(context.contentResolver)
 
     private val cancellables = mutableListOf<Future<*>>()
 
@@ -58,7 +61,7 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
         progressDao.set(book, progress)
     }
 
-    override fun onCleared() {
+    fun onCleared() {
         cancellables.forEach { it.cancel(false) }
         cancellables.clear()
     }
