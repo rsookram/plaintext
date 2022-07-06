@@ -1,19 +1,19 @@
 package io.github.rsookram.txt.reader
 
 import android.content.ContentResolver
+import androidx.annotation.WorkerThread
 import io.github.rsookram.txt.Book
 import io.github.rsookram.txt.BookContent
 import io.github.rsookram.txt.Line
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class ContentLoader(private val contentResolver: ContentResolver) {
 
-    suspend fun load(book: Book): BookContent = withContext(Dispatchers.IO) {
+    @WorkerThread
+    fun load(book: Book): BookContent {
         val lines = getLines(book)
         val lastLine = lines.lastOrNull()
         val length = if (lastLine != null) lastLine.offset + lastLine.text.length else 0
-        BookContent(lines, length)
+        return BookContent(lines, length)
     }
 
     private fun getLines(book: Book): List<Line> {

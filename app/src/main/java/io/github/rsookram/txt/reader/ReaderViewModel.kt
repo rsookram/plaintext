@@ -4,9 +4,8 @@ import android.app.Application
 import androidx.lifecycle.*
 import io.github.rsookram.txt.Book
 import io.github.rsookram.txt.BookContent
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Future
 
 class ReaderViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -24,6 +23,8 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
     private val progressDao = ProgressDao(getApplication())
     private val loader = ContentLoader(getApplication<Application>().contentResolver)
 
+    private val cancellables = mutableListOf<Future<*>>()
+
     private lateinit var book: Book
 
     fun load(book: Book) {
@@ -33,14 +34,12 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
 
         this.book = book
 
-        viewModelScope.launch {
-            val contentAsync = async { loader.load(book) }
-            val progressAsync = async { progressDao.get(book) }
-            val content = contentAsync.await()
-            val progress = progressAsync.await()
-
-            seekEvent.setValue(progress ?: 0)
-            this@ReaderViewModel.content.value = content
+        cancellables += CompletableFuture.supplyAsync {
+            loader.load(book)
+        }.thenAccept { content ->
+            val progress = progressDao.get(book)
+            this@ReaderViewModel.content.postValue(content)
+            seekEvent.postValue(progress ?: 0)
         }
     }
 
@@ -56,9 +55,12 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
 
     fun saveProgress() {
         val progress = currentLine ?: return
-        GlobalScope.launch {
-            progressDao.set(book, progress)
-        }
+        progressDao.set(book, progress)
+    }
+
+    override fun onCleared() {
+        cancellables.forEach { it.cancel(false) }
+        cancellables.clear()
     }
 }
 
