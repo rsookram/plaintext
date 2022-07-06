@@ -3,19 +3,21 @@ package io.github.rsookram.txt
 import android.os.Bundle
 import android.view.Window
 import androidx.activity.ComponentActivity
-import androidx.activity.viewModels
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.ViewModelProvider
 import io.github.rsookram.txt.reader.ReaderViewModel
 import io.github.rsookram.txt.reader.view.ReaderView
 
 class MainActivity : ComponentActivity(R.layout.view_reader) {
 
-    private val vm: ReaderViewModel by viewModels()
+    private lateinit var vm: ReaderViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        vm = ViewModelProvider(this)[ReaderViewModel::class.java]
 
         window.enableImmersiveMode()
 

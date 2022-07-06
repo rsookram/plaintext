@@ -27,12 +27,12 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.activity:activity-ktx:1.5.0'
+    implementation 'androidx.core:core:1.8.0'
+    implementation 'androidx.activity:activity:1.5.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
 
     def lifecycle = '2.5.0'
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:${lifecycle}"
+    implementation "androidx.lifecycle:lifecycle-livedata:${lifecycle}"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${lifecycle}"
 
     def coroutines = '1.6.3'
