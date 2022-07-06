@@ -21,7 +21,7 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
 
     private var currentLine: Int? = null
 
-    private val progressDao = ProgressDao.getInstance(getApplication())
+    private val progressDao = ProgressDao(getApplication())
     private val loader = ContentLoader(getApplication<Application>().contentResolver)
 
     private lateinit var book: Book
