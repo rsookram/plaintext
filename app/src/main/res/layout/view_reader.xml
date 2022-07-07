@@ -11,6 +11,7 @@
         android:layout_height="match_parent"
         android:paddingVertical="16dp"
         android:clipToPadding="false"
+        android:scrollbarStyle="outsideOverlay"
         android:divider="@null"/>
 
     <TextView
