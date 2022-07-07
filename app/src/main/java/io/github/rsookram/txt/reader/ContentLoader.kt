@@ -1,14 +1,12 @@
 package io.github.rsookram.txt.reader
 
 import android.content.ContentResolver
-import androidx.annotation.WorkerThread
 import io.github.rsookram.txt.Book
 import io.github.rsookram.txt.BookContent
 import io.github.rsookram.txt.Line
 
 class ContentLoader(private val contentResolver: ContentResolver) {
 
-    @WorkerThread
     fun load(book: Book): BookContent {
         val lines = getLines(book)
         val lastLine = lines.lastOrNull()

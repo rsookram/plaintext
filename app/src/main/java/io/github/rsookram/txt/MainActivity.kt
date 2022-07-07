@@ -3,9 +3,8 @@ package io.github.rsookram.txt
 import android.app.Activity
 import android.os.Bundle
 import android.view.Window
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
+import android.view.WindowInsets
+import android.view.WindowInsetsController
 import io.github.rsookram.txt.reader.ReaderViewModel
 import io.github.rsookram.txt.reader.view.ReaderView
 
@@ -75,11 +74,11 @@ class MainActivity : Activity() {
 }
 
 private fun Window.enableImmersiveMode() {
-    WindowCompat.setDecorFitsSystemWindows(this, false)
+    setDecorFitsSystemWindows(false)
 
-    WindowCompat.getInsetsController(this, decorView).apply {
+    insetsController?.apply {
         systemBarsBehavior =
-            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        hide(WindowInsetsCompat.Type.systemBars())
+            WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        hide(WindowInsets.Type.systemBars())
     }
 }
