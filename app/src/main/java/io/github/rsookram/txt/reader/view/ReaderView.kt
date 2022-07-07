@@ -1,18 +1,25 @@
 package io.github.rsookram.txt.reader.view
 
+import android.widget.AbsListView
 import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
 import io.github.rsookram.txt.BookContent
 
 class ReaderView(
-    private val list: LineRecyclerView,
+    private val list: LineListView,
     private val progress: TextView,
     onMoveListener: (Pair<Int?, Int>) -> Unit,
 ) {
 
     init {
-        list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+        list.setOnScrollListener(object : AbsListView.OnScrollListener {
+            override fun onScrollStateChanged(view: AbsListView?, scrollState: Int) = Unit
+
+            override fun onScroll(
+                view: AbsListView?,
+                firstVisibleItem: Int,
+                visibleItemCount: Int,
+                totalItemCount: Int
+            ) {
                 onMoveListener(getProgress() to list.getLineOffset())
             }
         })
@@ -22,7 +29,7 @@ class ReaderView(
     }
 
     fun setContent(content: BookContent) {
-        list.swapAdapter(ReaderAdapter(content.lines), true)
+        list.adapter = ReaderAdapter(list.context, content.lines)
     }
 
     fun seekTo(lineIndex: Int) {
