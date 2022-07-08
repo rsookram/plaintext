@@ -21,7 +21,7 @@
         android:layout_gravity="bottom"
         android:gravity="end"
         android:padding="8dp"
-        android:background="@color/progressBackground"
+        android:background="#80000000"
         tools:text="8763 / 32492"
         android:textColor="@android:color/white"/>
 </merge>
