@@ -38,10 +38,10 @@ public class MainActivity extends Activity {
             }
         });
 
-        Book book = new Book(uri);
-        vm.load(book);
+        TextFile textFile = new TextFile(uri);
+        vm.load(textFile);
 
-        vm.setOnContent(view::setContent);
+        vm.setOnTextLoad(view::setText);
         vm.setOnSeek(view::seekTo);
         vm.setOnProgress(view::bindProgress);
     }
@@ -61,7 +61,7 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
 
-        vm.setOnContent(bookContent -> {});
+        vm.setOnTextLoad(text -> {});
         vm.setOnSeek(lineIndex -> {});
         vm.setOnProgress((offset, length) -> {});
 

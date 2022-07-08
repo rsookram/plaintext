@@ -3,7 +3,7 @@ package io.github.rsookram.txt.reader;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import io.github.rsookram.txt.Book;
+import io.github.rsookram.txt.TextFile;
 
 class ProgressStore {
 
@@ -13,8 +13,8 @@ class ProgressStore {
         prefs = context.getSharedPreferences("txt", Context.MODE_PRIVATE);
     }
 
-    public Integer get(Book book) {
-        String key = key(book);
+    public Integer get(TextFile textFile) {
+        String key = key(textFile);
         if (key == null) {
             return null;
         }
@@ -23,8 +23,8 @@ class ProgressStore {
         return value >= 0 ? value : null;
     }
 
-    public void set(Book book, int progress) {
-        String key = key(book);
+    public void set(TextFile textFile, int progress) {
+        String key = key(textFile);
         if (key == null) {
             return;
         }
@@ -34,7 +34,7 @@ class ProgressStore {
                 .apply();
     }
 
-    private String key(Book book) {
-        return book.uri.getPath();
+    private String key(TextFile textFile) {
+        return textFile.uri.getPath();
     }
 }

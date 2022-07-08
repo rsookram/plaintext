@@ -2,11 +2,11 @@ package io.github.rsookram.txt;
 
 import android.net.Uri;
 
-public class Book {
+public class TextFile {
 
     public final Uri uri;
 
-    public Book(Uri uri) {
+    public TextFile(Uri uri) {
         this.uri = uri;
     }
 }

@@ -12,46 +12,46 @@ import java.util.concurrent.Future;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import io.github.rsookram.txt.Book;
-import io.github.rsookram.txt.BookContent;
 import io.github.rsookram.txt.Line;
+import io.github.rsookram.txt.Text;
+import io.github.rsookram.txt.TextFile;
 
 public class ReaderViewModel {
 
     private final ProgressStore progressStore;
-    private final ContentLoader loader;
+    private final TextLoader loader;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final List<Future<?>> cancellables = new ArrayList<>();
 
-    private Consumer<BookContent> onContent = bookContent -> {};
+    private Consumer<Text> onTextLoad = text -> {};
     private Consumer<Integer> onSeek = progress -> {};
     private BiConsumer<Integer, Integer> onProgress = (offset, length) -> {};
 
-    private BookContent content;
+    private Text text;
     private Pair<Integer, Integer> progress;
     private Integer currentLine;
 
-    private Book book;
+    private TextFile textFile;
 
     public ReaderViewModel(Context context) {
         this.progressStore = new ProgressStore(context);
-        this.loader = new ContentLoader(context.getContentResolver());
+        this.loader = new TextLoader(context.getContentResolver());
     }
 
-    public void load(Book book) {
-        if (content != null) {
+    public void load(TextFile textFile) {
+        if (text != null) {
             return;
         }
 
-        this.book = book;
+        this.textFile = textFile;
 
-        Future<Void> future = CompletableFuture.supplyAsync(() -> loader.load(book))
-                .thenAccept(content -> {
-                    Integer progress = progressStore.get(book);
+        Future<Void> future = CompletableFuture.supplyAsync(() -> loader.load(textFile))
+                .thenAccept(text -> {
+                    Integer progress = progressStore.get(textFile);
                     handler.post(() -> {
-                        ReaderViewModel.this.content = content;
-                        onContent.accept(content);
+                        ReaderViewModel.this.text = text;
+                        onTextLoad.accept(text);
                         onSeek.accept(progress != null ? progress : 0);
                     });
                 });
@@ -61,19 +61,19 @@ public class ReaderViewModel {
     public void onProgressChanged(int progress, int offsetInLine) {
         currentLine = progress;
 
-        if (content == null) {
+        if (text == null) {
             return;
         }
 
-        if (progress >= content.lines.size()) {
+        if (progress >= text.lines.size()) {
             return;
         }
 
-        Line line = content.lines.get(progress);
+        Line line = text.lines.get(progress);
 
         int totalOffset = line.offset + offsetInLine;
-        ReaderViewModel.this.progress = new Pair<>(totalOffset, content.length);
-        onProgress.accept(totalOffset, content.length);
+        ReaderViewModel.this.progress = new Pair<>(totalOffset, text.length);
+        onProgress.accept(totalOffset, text.length);
     }
 
     public void saveProgress() {
@@ -81,14 +81,14 @@ public class ReaderViewModel {
             return;
         }
 
-        progressStore.set(book, currentLine);
+        progressStore.set(textFile, currentLine);
     }
 
-    public void setOnContent(Consumer<BookContent> onContent) {
-        if (content != null) {
-            onContent.accept(content);
+    public void setOnTextLoad(Consumer<Text> onTextLoad) {
+        if (text != null) {
+            onTextLoad.accept(text);
         }
-        this.onContent = onContent;
+        this.onTextLoad = onTextLoad;
     }
 
     public void setOnSeek(Consumer<Integer> onSeek) {

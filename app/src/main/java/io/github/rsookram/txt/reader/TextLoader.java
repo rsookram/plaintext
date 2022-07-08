@@ -10,29 +10,29 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import io.github.rsookram.txt.Book;
-import io.github.rsookram.txt.BookContent;
 import io.github.rsookram.txt.Line;
+import io.github.rsookram.txt.Text;
+import io.github.rsookram.txt.TextFile;
 
-public class ContentLoader {
+public class TextLoader {
 
     private final ContentResolver contentResolver;
 
-    public ContentLoader(ContentResolver contentResolver) {
+    public TextLoader(ContentResolver contentResolver) {
         this.contentResolver = contentResolver;
     }
 
-    public BookContent load(Book book) {
-        List<Line> lines = getLines(book);
+    public Text load(TextFile textFile) {
+        List<Line> lines = getLines(textFile);
         Line lastLine = lines.isEmpty() ? null : lines.get(lines.size() - 1);
         int length = lastLine != null ? lastLine.offset + lastLine.text.length() : 0;
-        return new BookContent(lines, length);
+        return new Text(lines, length);
     }
 
-    private List<Line> getLines(Book book) {
+    private List<Line> getLines(TextFile textFile) {
         InputStream stream;
         try {
-            stream = contentResolver.openInputStream(book.uri);
+            stream = contentResolver.openInputStream(textFile.uri);
         } catch (FileNotFoundException e) {
             return Collections.emptyList();
         }

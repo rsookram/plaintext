@@ -5,7 +5,7 @@ import android.widget.TextView;
 
 import java.util.function.BiConsumer;
 
-import io.github.rsookram.txt.BookContent;
+import io.github.rsookram.txt.Text;
 
 public class ReaderView {
 
@@ -33,8 +33,8 @@ public class ReaderView {
         progress.setOnTouchListener((v, event) -> true);
     }
 
-    public void setContent(BookContent content) {
-        list.setAdapter(new ReaderAdapter(list.getContext(), content.lines));
+    public void setText(Text text) {
+        list.setAdapter(new ReaderAdapter(list.getContext(), text.lines));
     }
 
     public void seekTo(int lineIndex) {
