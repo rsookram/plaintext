@@ -38,8 +38,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        TextFile textFile = new TextFile(uri);
-        vm.load(textFile);
+        vm.load(uri);
 
         vm.setOnTextLoad(view::setText);
         vm.setOnSeek(view::seekTo);

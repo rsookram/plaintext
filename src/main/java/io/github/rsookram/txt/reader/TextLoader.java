@@ -1,6 +1,7 @@
 package io.github.rsookram.txt.reader;
 
 import android.content.ContentResolver;
+import android.net.Uri;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -12,7 +13,6 @@ import java.util.List;
 
 import io.github.rsookram.txt.Line;
 import io.github.rsookram.txt.Text;
-import io.github.rsookram.txt.TextFile;
 
 public class TextLoader {
 
@@ -22,17 +22,17 @@ public class TextLoader {
         this.contentResolver = contentResolver;
     }
 
-    public Text load(TextFile textFile) {
-        List<Line> lines = getLines(textFile);
+    public Text load(Uri uri) {
+        List<Line> lines = getLines(uri);
         Line lastLine = lines.isEmpty() ? null : lines.get(lines.size() - 1);
         int length = lastLine != null ? lastLine.offset + lastLine.text.length() : 0;
         return new Text(lines, length);
     }
 
-    private List<Line> getLines(TextFile textFile) {
+    private List<Line> getLines(Uri uri) {
         InputStream stream;
         try {
-            stream = contentResolver.openInputStream(textFile.uri);
+            stream = contentResolver.openInputStream(uri);
         } catch (FileNotFoundException e) {
             return Collections.emptyList();
         }

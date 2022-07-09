@@ -1,6 +1,7 @@
 package io.github.rsookram.txt.reader;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Pair;
@@ -14,7 +15,6 @@ import java.util.function.Consumer;
 
 import io.github.rsookram.txt.Line;
 import io.github.rsookram.txt.Text;
-import io.github.rsookram.txt.TextFile;
 
 public class ReaderViewModel {
 
@@ -32,23 +32,23 @@ public class ReaderViewModel {
     private Pair<Integer, Integer> progress;
     private Integer currentLine;
 
-    private TextFile textFile;
+    private Uri uri;
 
     public ReaderViewModel(Context context) {
         this.progressStore = new ProgressStore(context);
         this.loader = new TextLoader(context.getContentResolver());
     }
 
-    public void load(TextFile textFile) {
+    public void load(Uri uri) {
         if (text != null) {
             return;
         }
 
-        this.textFile = textFile;
+        this.uri = uri;
 
-        Future<Void> future = CompletableFuture.supplyAsync(() -> loader.load(textFile))
+        Future<Void> future = CompletableFuture.supplyAsync(() -> loader.load(uri))
                 .thenAccept(text -> {
-                    Integer progress = progressStore.get(textFile);
+                    Integer progress = progressStore.get(uri);
                     handler.post(() -> {
                         ReaderViewModel.this.text = text;
                         onTextLoad.accept(text);
@@ -81,7 +81,7 @@ public class ReaderViewModel {
             return;
         }
 
-        progressStore.set(textFile, currentLine);
+        progressStore.set(uri, currentLine);
     }
 
     public void setOnTextLoad(Consumer<Text> onTextLoad) {
