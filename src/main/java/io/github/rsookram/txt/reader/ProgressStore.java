@@ -4,6 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 
+/**
+ * The persistence layer for reading progress. Progress is represented as the zero-indexed position
+ * of a {@link io.github.rsookram.txt.Line} in a file.
+ */
 class ProgressStore {
 
     private final SharedPreferences prefs;

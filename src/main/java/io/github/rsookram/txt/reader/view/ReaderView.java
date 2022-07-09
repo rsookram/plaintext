@@ -12,6 +12,11 @@ public class ReaderView {
     private final LineListView list;
     private final TextView progress;
 
+    /**
+     * @param onMoveListener listener which is notified on scroll events with the index of the first
+     * {@link io.github.rsookram.txt.Line} in the viewport, and the offset of the first visible
+     * character in that {@link io.github.rsookram.txt.Line}.
+     */
     public ReaderView(LineListView list,
                       TextView progress,
                       BiConsumer<Integer, Integer> onMoveListener) {
@@ -24,7 +29,10 @@ public class ReaderView {
             }
 
             @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            public void onScroll(AbsListView view,
+                                 int firstVisibleItem,
+                                 int visibleItemCount,
+                                 int totalItemCount) {
                 onMoveListener.accept(getProgress(), list.getLineOffset());
             }
         });

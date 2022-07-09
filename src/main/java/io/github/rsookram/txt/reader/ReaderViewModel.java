@@ -16,6 +16,10 @@ import java.util.function.Consumer;
 import io.github.rsookram.txt.Line;
 import io.github.rsookram.txt.Text;
 
+/**
+ * The main ViewModel which contains business logic. It behaves like an androidx ViewModel, and is
+ * similarly cleared in {@link #onCleared()}.
+ */
 public class ReaderViewModel {
 
     private final ProgressStore progressStore;
@@ -58,6 +62,9 @@ public class ReaderViewModel {
         cancellables.add(future);
     }
 
+    /**
+     * @param progress The index of the first {@link Line} on-screen.
+     */
     public void onProgressChanged(int progress, int offsetInLine) {
         currentLine = progress;
 
@@ -91,10 +98,19 @@ public class ReaderViewModel {
         this.onTextLoad = onTextLoad;
     }
 
+    /**
+     * Sets a listener to be notified when the text should be scrolled to make the {@link Line} at
+     * the given index visible.
+     */
     public void setOnSeek(Consumer<Integer> onSeek) {
         this.onSeek = onSeek;
     }
 
+    /**
+     * Sets a listener to be notified when the progress through the text changes. The listener is
+     * passed the character offset of the start of the first rendered line on-screen, and the length
+     * of the entire text.
+     */
     public void setOnProgress(BiConsumer<Integer, Integer> onProgress) {
         if (progress != null) {
             onProgress.accept(progress.first, progress.second);
