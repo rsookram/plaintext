@@ -22,6 +22,6 @@
         android:gravity="end"
         android:padding="8dp"
         android:background="#80000000"
-        tools:text="8763 / 32492"
+        tools:text="88.9%"
         android:textColor="@android:color/white"/>
 </merge>

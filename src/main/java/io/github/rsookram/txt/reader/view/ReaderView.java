@@ -3,6 +3,7 @@ package io.github.rsookram.txt.reader.view;
 import android.widget.AbsListView;
 import android.widget.TextView;
 
+import java.util.Locale;
 import java.util.function.BiConsumer;
 
 import io.github.rsookram.txt.Text;
@@ -54,6 +55,6 @@ public class ReaderView {
     }
 
     public void bindProgress(int offset, int length) {
-        progress.setText(offset + " / " + length);
+        progress.setText(String.format(Locale.getDefault(), "%.1f%%", offset * 100.0 / length));
     }
 }
